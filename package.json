@@ -19,20 +19,19 @@
   "license": "MIT",
   "devDependencies": {
     "@weave-js/core": "^0.7.0-rc.6",
-    "eslint": "^5.15.1",
+    "eslint": "^5.16.0",
     "eslint-config-fw": "^1.0.3",
     "eslint-loader": "^2.1.2",
     "istanbul": "^0.4.5",
-    "jest": "^24.4.0",
+    "jest": "^24.7.1",
     "request": "^2.88.0"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.19.0",
     "fachwork": "0.0.10",
     "lodash": "^4.17.11",
-    "mime-types": "^2.1.22",
-    "spdy": "^4.0.0",
-    "supertest": "^4.0.0"
+    "mime-types": "^2.1.24",
+    "supertest": "^4.0.2"
   },
   "jest": {
     "testEnvironment": "node",
