@@ -1,8 +1,19 @@
-const { Weave } = require('@weave-js/core')
+const { Weave, TransportAdapters } = require('@weave-js/core')
 const WebGateway = require('../lib/index')
+const path = require('path')
 
 const broker = Weave({
-    nodeId: 'web1'
+    nodeId: 'web1',
+    transport: {
+        adapter: TransportAdapters.Fake()
+    }
+})
+
+const testBroker = Weave({
+    nodeId: 'test-broker',
+    transport: {
+        adapter: TransportAdapters.Fake()
+    }
 })
 
 broker.createService({
@@ -10,15 +21,19 @@ broker.createService({
     actions: {
         hello: {
             handler (context) {
-                return 'hello from weave'
+                return context.call('$node.actions')
             }
         }
     }
 })
 
 broker.createService({
-    mixins: [WebGateway],
+    mixins: [WebGateway()],
+    name: 'api',
     settings: {
+        assets: {
+            folder: path.join(__dirname, 'public')
+        },
         routes: [
             {
                 path: '/not',
@@ -31,19 +46,23 @@ broker.createService({
                     headers: true,
                     limit: 10
                 }
-            }
+            },
+            {
+                path: '/not',
+                whitelist: ['test.*']
+            },
         ]
     }
 })
 
-broker.createService({
+testBroker.createService({
     name: 'test',
     version: 2,
     actions: {
         post (context) {
-            context.meta.responseHeader = 'asdasd'
+            context.meta.$responseType = 'application/text'
             return new Promise(resolve => {
-                setTimeout(() => resolve('sdasdasdas'), 1000)
+                setTimeout(() => resolve('sdasdasdas from ' + context.callerNodeId + ' on ' + context.nodeId), 1000)
             })
         }
     }
@@ -59,3 +78,4 @@ broker.createService({
     }
 })
 broker.start()
+testBroker.start()
