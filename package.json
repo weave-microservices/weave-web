@@ -18,7 +18,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@weave-js/core": "^0.7.0-rc.6",
+    "@weave-js/core": "^0.7.0-rc.8",
     "eslint": "^5.16.0",
     "eslint-config-fw": "^1.0.3",
     "eslint-loader": "^2.1.2",
@@ -29,8 +29,8 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "fachwork": "0.0.10",
-    "lodash": "^4.17.11",
-    "mime-types": "^2.1.24",
+    "lodash": "^4.17.15",
+    "mime-types": "^2.1.25",
     "supertest": "^4.0.2"
   },
   "jest": {
