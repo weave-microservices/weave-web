@@ -50,7 +50,7 @@ broker.createService({
             {
                 path: '/not',
                 whitelist: ['test.*']
-            },
+            }
         ]
     }
 })
