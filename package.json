@@ -1,0 +1,51 @@
+{
+  "name": "@weave-js/web",
+  "version": "0.7.0-beta.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "ci": "jest --watch",
+    "test": "NODE_ENV=test jest --no-cache",
+    "coverage": "jest --coverage --no-cache",
+    "lint": "eslint . --ext .js --fix"
+  },
+
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Kevin Ries",
+    "company": "Fachwerk Software",
+    "email": "kevin.ries@fachwerk.io",
+    "url": "https://weave.fachwerk.io"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@weave-js/core": "0.7.0-rc.19"
+  },
+  "devDependencies": {
+    "@weave-js/core": "0.7.0-rc.19",
+    "eslint": "^7.1.0",
+    "eslint-config-fw": "^1.0.3",
+    "eslint-loader": "^4.0.2",
+    "jest": "^26.0.1",
+    "jest-cli": "^26.0.1",
+    "lolex": "^6.0.0",
+    "request": "^2.88.0",
+    "supertest": "^4.0.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "fachwork": "0.0.10",
+    "lodash": "^4.17.15",
+    "mime-types": "^2.1.26",
+    "serve-static": "^1.14.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "rootDir": "./lib",
+    "roots": [
+      "../test"
+    ]
+  }
+}
