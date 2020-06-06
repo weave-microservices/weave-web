@@ -1,13 +1,15 @@
 module.exports = {
-  name: 'auth',
+  name: 'translate',
   actions: {
-    login: {
+    language () {
+      return 'deutsch'
+    },
+    reverse: {
       params: {
-        username: { type: 'string' },
-        password: { type: 'string' }
+        text: { type: 'string' }
       },
       handler: (context) => {
-        return context.params.username + '/' + context.params.password
+        return context.params.text.split('').reverse().join('')
       }
     }
   }

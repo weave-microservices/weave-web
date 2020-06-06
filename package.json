@@ -1,6 +1,6 @@
 {
   "name": "@weave-js/web",
-  "version": "0.7.0-beta.1",
+  "version": "0.7.0-beta.2",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
