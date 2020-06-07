@@ -9,7 +9,6 @@
     "coverage": "jest --coverage --no-cache",
     "lint": "eslint . --ext .js --fix"
   },
-
   "publishConfig": {
     "access": "public"
   },

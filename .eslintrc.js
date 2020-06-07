@@ -1,11 +1,14 @@
 module.exports = {
-    root: true,
-    extends: [
-      'eslint-config-fw'
-    ],
-    rules: {
-      'quotes': [2, 'single', { 'avoidEscape': true }],
-      'indent': ['error', 2]
-    }
+  root: true,
+  extends: [
+    'eslint-config-fw'
+  ],
+  parserOptions: {
+    'sourceType': 'module',
+    'ecmaVersion': 9
+  },
+  rules: {
+    'quotes': [2, 'single', { 'avoidEscape': true }],
+    'indent': ['error', 2]
   }
-  
+}

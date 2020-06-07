@@ -6,7 +6,7 @@ const fs = require('fs')
 const { deepMerge } = require('@weave-js/utils')
 const lolex = require('lolex')
 
-const setup = (settings, nodeSettings = {}) => {
+const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
     logger: {
       logLevel: 'fatal'
@@ -17,26 +17,26 @@ const setup = (settings, nodeSettings = {}) => {
 
   const service = broker.createService({
     mixins: [ApiService()],
-    settings
+    settings,
+    ...schemaExtensions
   })
 
   const server = service.server
 
-  return [broker, service, server]
+  return [broker, server, service]
 }
 
 describe('Test static file server', () => {
   let broker
-  let service
   let server
 
   beforeAll(() => {
-    [broker, service, server] = setup({
+    [broker, server] = setup({
       port: 8156,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
-      routes: null
+      handlers: null
     })
 
     return broker.start()
@@ -46,7 +46,6 @@ describe('Test static file server', () => {
     return broker.stop()
       .then(() => {
         broker = null
-        service = null
         server = null
       })
   })
@@ -83,16 +82,15 @@ describe('Test static file server', () => {
 
 describe('Weave web service', () => {
   let broker
-  let service
   let server
 
-  beforeEach(() => {
-    [broker, service, server] = setup({
+  beforeAll(() => {
+    [broker, server] = setup({
       port: 8156,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
-      routes: [
+      handlers: [
         {
           path: '/api',
           whitelist: ['math.*', 'auth.*', 'test.*']
@@ -112,11 +110,10 @@ describe('Weave web service', () => {
     return broker.start()
   })
 
-  afterEach(() => {
+  afterAll(() => {
     return broker.stop()
       .then(() => {
         broker = null
-        service = null
         server = null
       })
   })
@@ -161,34 +158,33 @@ describe('Weave web service', () => {
       })
   })
 
-  it.only('GET test.hello with sanitized url', () => {
-    return request(server)
-      .get('/api_new/translate/language')
-      .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-        expect(res.body).toBe('Hello from ' + res.headers['x-request-id'])
-      })
-  })
+  // it.only('GET test.hello with sanitized url', () => {
+  //   return request(server)
+  //     .get('/api_new/translate/language')
+  //     .then(res => {
+  //       expect(res.statusCode).toBe(200)
+  //       expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
+  //       expect(res.body).toBe('Hello from ' + res.headers['x-request-id'])
+  //     })
+  // })
 })
 
 describe('Test rate limitter', () => {
   let broker
-  let service
   let server
   let clock
 
   beforeAll(() => {
     clock = lolex.install();
 
-    [broker, service, server] = setup({
+    [broker, server] = setup({
       port: 8156,
       rateLimit: {
         windowSizeMs: 5000,
         limit: 3,
         headers: true
       },
-      routes: [
+      handlers: [
         {
           path: '/api',
           whitelist: ['math.*', 'auth.*']
@@ -205,7 +201,6 @@ describe('Test rate limitter', () => {
     return broker.stop()
       .then(() => {
         broker = null
-        service = null
         server = null
       })
   })
@@ -280,14 +275,13 @@ describe('Test rate limitter', () => {
 describe('Request hooks', () => {
   let flow
   let broker
-  let service
   let server
 
   beforeAll(() => {
     flow = [];
-    [broker, service, server] = setup({
+    [broker, server] = setup({
       port: 8156,
-      routes: [
+      handlers: [
         {
           path: '/api',
           whitelist: ['test.*', 'math.*'],
@@ -314,7 +308,6 @@ describe('Request hooks', () => {
     return broker.stop()
       .then(() => {
         broker = null
-        service = null
         server = null
       })
   })
@@ -338,23 +331,28 @@ describe('Request hooks', () => {
   })
 })
 
-describe('Route aliases', () => {
-  let flow
+describe('Handling handler routes', () => {
   let broker
-  let service
   let server
 
   beforeAll(() => {
-    flow = [];
-    [broker, service, server] = setup({
+    // flow = [];
+    [broker, server] = setup({
       port: 8156,
-      routes: [
+      handlers: [
         {
           path: '/api',
           whitelist: ['test.*', 'math.*'],
-          aliases: {
+          routes: {
             'GET /json': 'test.json',
-            'GET /json/:name': 'test.jsonWithParams'
+            'GET /json/:name': 'test.jsonWithParams',
+            'GET /json-middleware': [
+              function (request, response, next) {
+                request.$params.name = 'Johnny'
+                return next()
+              },
+              'test.jsonWithParams'
+            ]
           }
         }
       ]
@@ -368,7 +366,6 @@ describe('Route aliases', () => {
     return broker.stop()
       .then(() => {
         broker = null
-        service = null
         server = null
       })
   })
@@ -400,25 +397,105 @@ describe('Route aliases', () => {
         })
       })
   })
+
+  it('should handle route middlewares with an array definition', () => {
+    return request(server)
+      .get('/api/json-middleware')
+      .then(res => {
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
+        expect(res.body).toEqual({
+          name: 'Johnny',
+          age: 12,
+          gender: 'male'
+        })
+      })
+  })
 })
 
-// describe('Authorization', () => {
-//   let flow
+describe('Authorization', () => {
+  let broker
+  let server
+
+  beforeAll(() => {
+    [broker, server] = setup({
+      port: 8156,
+      handlers: [
+        {
+          path: '/api',
+          routes: {
+            'GET /json-authorized': 'test.json',
+            'GET /json-authorized-fail': 'test.json'
+          },
+          authorization: true
+        }
+      ]
+    },
+    {},
+    {
+      methods: {
+        authorize (context, request, response) {
+          if (request.parsedUrl !== '/api/json-authorized') {
+            const error = new Error('Failed')
+            error.code = 405
+            return Promise.reject(error)
+          }
+        }
+      }})
+
+    broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'))
+    return broker.start()
+  })
+
+  afterAll(() => {
+    return broker.stop()
+  })
+
+  it('should call an action through an route alias', () => {
+    return request(server)
+      .get('/api/json-authorized')
+      .then(res => {
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
+        expect(res.body).toEqual({
+          name: 'Bill',
+          age: 12,
+          gender: 'male'
+        })
+      })
+  })
+
+  it('should fail with an authorization error', () => {
+    return request(server)
+      .get('/api/json-authorized-fail')
+      .then(res => {
+        expect(res.statusCode).toBe(405)
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
+        expect(res.body).toEqual({
+          code: 405,
+          message: 'Failed',
+          name: 'Error'
+        })
+      })
+  })
+})
+
+// describe('CORS', () => {
 //   let broker
-//   let service
 //   let server
 
 //   beforeAll(() => {
-//     flow = [];
-//     [broker, service, server] = setup({
+//     [broker, server] = setup({
 //       port: 8156,
-//       routes: [
+//       cors: {
+//         origin: 'a'
+//       },
+//       handlers: [
 //         {
 //           path: '/api',
-//           whitelist: ['test.*', 'math.*'],
-//           aliases: {
-//             'GET /json': 'test.json',
-//             'GET /json/:name': 'test.jsonWithParams'
+//           routes: {
+//             'GET /json-authorized': 'test.json',
+//             'GET /json-authorized-fail': 'test.json'
 //           },
 //           authorization: true
 //         }
@@ -435,7 +512,8 @@ describe('Route aliases', () => {
 
 //   it('should call an action through an route alias', () => {
 //     return request(server)
-//       .get('/api/json')
+//       .get('/api/json-authorized')
+//       .set('Origin', 'http://localhost:3000')
 //       .then(res => {
 //         expect(res.statusCode).toBe(200)
 //         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
@@ -447,27 +525,17 @@ describe('Route aliases', () => {
 //       })
 //   })
 
-//   it('GET /math should call route hooks in the ride order', () => {
+//   it('should fail with an authorization error', () => {
 //     return request(server)
-//       .get('/api/json/Donald')
+//       .get('/api/json-authorized-fail')
 //       .then(res => {
-//         expect(res.statusCode).toBe(200)
+//         expect(res.statusCode).toBe(405)
 //         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
 //         expect(res.body).toEqual({
-//           name: 'Donald',
-//           age: 12,
-//           gender: 'male'
+//           code: 405,
+//           message: 'Failed',
+//           name: 'Error'
 //         })
 //       })
 //   })
 // })
-
-const routes = [
-  {
-    path: '/',
-    whitelist: [''],
-    resolvers: {
-      'GET /'
-    }
-  }
-]
