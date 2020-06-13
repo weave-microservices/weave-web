@@ -1,5 +1,5 @@
 const fs = require('fs')
-
+const path = require('path')
 module.exports = {
   name: 'test',
   actions: {
@@ -16,7 +16,7 @@ module.exports = {
       return 'Hello from ' + context.requestId
     },
     file (context) {
-      return fs.createReadStream('')
+      return fs.createReadStream(path.join(__dirname, '..', 'assets', 'test', 'file'))
     },
     error () {
       throw new Error('Error!!!')

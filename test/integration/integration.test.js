@@ -158,6 +158,16 @@ describe('Weave web service', () => {
       })
   })
 
+  it.only('GET test.hello with sanitized url', () => {
+    return request(server)
+      .get('/api/test/file')
+      .then(res => {
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe('application/octet-stream')
+        expect(res.body.toString()).toBe('Hello from weave')
+      })
+  })
+
   // it.only('GET test.hello with sanitized url', () => {
   //   return request(server)
   //     .get('/api_new/translate/language')
