@@ -158,7 +158,7 @@ describe('Weave web service', () => {
       })
   })
 
-  it.only('GET test.hello with sanitized url', () => {
+  it('GET test.hello with sanitized url', () => {
     return request(server)
       .get('/api/test/file')
       .then(res => {
