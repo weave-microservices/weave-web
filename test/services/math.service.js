@@ -7,7 +7,7 @@ module.exports = {
         p2: { type: 'number', convert: true }
       },
       handler: (context) => {
-        return Number(context.params.p1) + Number(context.params.p2)
+        return Number(context.data.p1) + Number(context.data.p2)
       }
     }
   }

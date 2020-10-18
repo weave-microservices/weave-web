@@ -9,7 +9,7 @@ module.exports = {
         text: { type: 'string' }
       },
       handler: (context) => {
-        return context.params.text.split('').reverse().join('')
+        return context.data.text.split('').reverse().join('')
       }
     }
   }

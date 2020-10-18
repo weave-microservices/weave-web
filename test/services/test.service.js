@@ -9,7 +9,7 @@ module.exports = {
         p2: { type: 'number', convert: true }
       },
       handler: (context) => {
-        return Number(context.params.p1) + Number(context.params.p2)
+        return Number(context.data.p1) + Number(context.data.p2)
       }
     },
     hello (context) {
@@ -30,7 +30,7 @@ module.exports = {
     },
     jsonWithParams (context) {
       return {
-        name: context.params.name,
+        name: context.data.name,
         age: 12,
         gender: 'male'
       }
