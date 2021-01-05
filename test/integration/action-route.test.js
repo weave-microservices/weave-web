@@ -1,5 +1,5 @@
 const { Weave } = require('@weave-js/core')
-const ApiService = require('../../lib')
+const { WebService } = require('../../lib')
 const request = require('supertest')
 const path = require('path')
 const fs = require('fs')
@@ -17,7 +17,7 @@ const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   broker.loadService(path.join(__dirname, '..', 'services', 'greeter.service.js'))
 
   const service = broker.createService({
-    mixins: [ApiService()],
+    mixins: [WebService()],
     settings,
     ...schemaExtensions
   })
@@ -34,13 +34,11 @@ describe.only('Test action side route definition', () => {
   beforeAll(() => {
     [broker, server] = setup({
       port: 8156,
-      generateRoutesFromActions: true,
+      generateRoutesFromActions: false,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
-      handlers: [{
-        generateAutoRoutes: true
-      }]
+  
     })
 
     return broker.start()
