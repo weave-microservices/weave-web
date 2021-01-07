@@ -4,7 +4,6 @@ const request = require('supertest')
 const path = require('path')
 const fs = require('fs')
 const { deepMerge } = require('@weave-js/utils')
-const lolex = require('lolex')
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -167,16 +166,57 @@ describe('Weave web service', () => {
         expect(res.body.toString()).toBe('Hello from weave')
       })
   })
+  it('GET response headers from action', () => {
+    return request(server)
+      .get('/api/test/responseHeader')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('application/pdf')
+        expect(res.headers['custom-header-field']).toBe('i-am-custom')
+      })
+  })
 
-  // it.only('GET test.hello with sanitized url', () => {
-  //   return request(server)
-  //     .get('/api_new/translate/language')
-  //     .then(res => {
-  //       expect(res.statusCode).toBe(200)
-  //       expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-  //       expect(res.body).toBe('Hello from ' + res.headers['x-request-id'])
-  //     })
-  // })
+  it('GET should return Buffer', () => {
+    return request(server)
+      .get('/api/test/buffer')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('application/octet-stream')
+        expect(res.headers['content-length']).toBe('19')
+        expect(res.body).toEqual(Buffer.from('Lorem ipsum bla bla'))
+      })
+  })
+
+  it('GET should return serialized Buffer', () => {
+    return request(server)
+      .get('/api/test/serializedBuffer')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('application/octet-stream')
+        expect(res.headers['content-length']).toBe('19')
+        expect(res.body).toEqual(Buffer.from('Lorem ipsum bla bla'))
+      })
+  })
+
+  it('GET should return custom content type', () => {
+    return request(server)
+      .get('/api/test/responseType')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('custom/pdf')
+      })
+  })
+  it('GET should return custom content type', () => {
+    return request(server)
+      .get('/api/test/responseTypeInt')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('custom/pdf')
+      })
+  })
+
+  it('GET should handle custom status code from action', () => {
+    return request(server)
+      .get('/api/test/statusCode')
+      .then(res => {
+        expect(res.status).toBe(304)
+      })
+  })
 })
 
 describe('Request hooks', () => {
@@ -386,63 +426,3 @@ describe('Authorization', () => {
       })
   })
 })
-
-// describe('CORS', () => {
-//   let broker
-//   let server
-
-//   beforeAll(() => {
-//     [broker, server] = setup({
-//       port: 8156,
-//       cors: {
-//         origin: 'a'
-//       },
-//       handlers: [
-//         {
-//           path: '/api',
-//           routes: {
-//             'GET /json-authorized': 'test.json',
-//             'GET /json-authorized-fail': 'test.json'
-//           },
-//           authorization: true
-//         }
-//       ]
-//     })
-
-//     broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'))
-//     return broker.start()
-//   })
-
-//   afterAll(() => {
-//     return broker.stop()
-//   })
-
-//   it('should call an action through an route alias', () => {
-//     return request(server)
-//       .get('/api/json-authorized')
-//       .set('Origin', 'http://localhost:3000')
-//       .then(res => {
-//         expect(res.statusCode).toBe(200)
-//         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-//         expect(res.body).toEqual({
-//           name: 'Bill',
-//           age: 12,
-//           gender: 'male'
-//         })
-//       })
-//   })
-
-//   it('should fail with an authorization error', () => {
-//     return request(server)
-//       .get('/api/json-authorized-fail')
-//       .then(res => {
-//         expect(res.statusCode).toBe(405)
-//         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-//         expect(res.body).toEqual({
-//           code: 405,
-//           message: 'Failed',
-//           name: 'Error'
-//         })
-//       })
-//   })
-// })

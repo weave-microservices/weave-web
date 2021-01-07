@@ -4,7 +4,6 @@ const request = require('supertest')
 const path = require('path')
 const fs = require('fs')
 const { deepMerge } = require('@weave-js/utils')
-const lolex = require('lolex')
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -15,6 +14,7 @@ const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   }, nodeSettings))
 
   broker.loadService(path.join(__dirname, '..', 'services', 'greeter.service.js'))
+  broker.loadService(path.join(__dirname, '..', 'services', 'test.service.js'))
 
   const service = broker.createService({
     mixins: [WebService()],
@@ -27,7 +27,7 @@ const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   return [broker, server, service]
 }
 
-describe.only('Test action side route definition', () => {
+describe('Test action side route definition', () => {
   let broker
   let server
 
@@ -37,8 +37,8 @@ describe.only('Test action side route definition', () => {
       generateRoutesFromActions: false,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
-      },
-  
+      }
+
     })
 
     return broker.start()
