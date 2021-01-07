@@ -31,7 +31,7 @@ describe('Test static file server', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8155,
+      port: 4155,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
@@ -85,7 +85,7 @@ describe('Weave web service', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 4846,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
@@ -227,7 +227,7 @@ describe('Request hooks', () => {
   beforeAll(() => {
     flow = [];
     [broker, server] = setup({
-      port: 8156,
+      port: 4956,
       handlers: [
         {
           path: '/api',
@@ -285,7 +285,7 @@ describe('Handling handler routes', () => {
   beforeAll(() => {
     // flow = [];
     [broker, server] = setup({
-      port: 8156,
+      port: 4256,
       handlers: [
         {
           path: '/api',
@@ -366,7 +366,7 @@ describe('Authorization', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 4506,
       handlers: [
         {
           path: '/api',

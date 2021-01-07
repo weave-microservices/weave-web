@@ -33,7 +33,7 @@ describe('Test action side route definition', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 1155,
       generateRoutesFromActions: false,
       assets: {
         folder: path.join(__dirname, '..', 'assets')

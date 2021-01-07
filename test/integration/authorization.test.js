@@ -36,7 +36,7 @@ describe('Test authorization', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8159,
+      port: 2159,
       rateLimit: {
         windowSizeMs: 5000,
         limit: 3,

@@ -14,7 +14,7 @@ describe('Test middlewares', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8127,
+      port: 3127,
       handlers: [
         {
           path: '/api',

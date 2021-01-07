@@ -13,7 +13,7 @@ describe('Test middlewares', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8147,
+      port: 5147,
       use: [middleware],
       handlers: [
         {

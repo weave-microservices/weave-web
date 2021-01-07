@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "ci": "jest --watch",
-    "test": "NODE_ENV=test jest --no-cache",
+    "test": "NODE_ENV=test jest --forceExit --detectOpenHandles",
     "coverage": "jest --coverage --no-cache",
     "lint": "eslint . --ext .js --fix"
   },
@@ -23,7 +23,6 @@
     "@weave-js/core": ">=0.8.0"
   },
   "devDependencies": {
-    "@weave-js/core": "^0.8.0",
     "eslint": "^7.17.0",
     "eslint-config-fw": "^1.0.3",
     "eslint-loader": "^4.0.2",
@@ -34,6 +33,7 @@
     "supertest": "^6.0.1"
   },
   "dependencies": {
+    "@weave-js/core": "^0.8.0",
     "@weave-js/utils": "0.8.0",
     "body-parser": "^1.19.0",
     "lodash": "^4.17.20",

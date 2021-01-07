@@ -58,7 +58,7 @@ describe('Test rate limitter', () => {
     clock = lolex.install();
 
     [broker, server] = setup({
-      port: 8157,
+      port: 6157,
       rateLimit: {
         windowSizeMs: 5000,
         limit: 3,
@@ -161,7 +161,7 @@ describe('Test rate limitter with custom store', () => {
     clock = lolex.install();
 
     [broker, server] = setup({
-      port: 8157,
+      port: 6357,
       rateLimit: {
         RateLimitStore: CustomMemoryStore,
         windowSizeMs: 5000,
