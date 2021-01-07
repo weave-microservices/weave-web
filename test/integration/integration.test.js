@@ -1,10 +1,9 @@
 const { Weave } = require('@weave-js/core')
-const ApiService = require('../../lib')
+const { WebService } = require('../../lib')
 const request = require('supertest')
 const path = require('path')
 const fs = require('fs')
 const { deepMerge } = require('@weave-js/utils')
-const lolex = require('lolex')
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -16,7 +15,7 @@ const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   broker.loadService(path.join(__dirname, '..', 'services', 'test.service.js'))
 
   const service = broker.createService({
-    mixins: [ApiService()],
+    mixins: [WebService()],
     settings,
     ...schemaExtensions
   })
@@ -32,7 +31,7 @@ describe('Test static file server', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 4155,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
@@ -86,7 +85,7 @@ describe('Weave web service', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 4846,
       assets: {
         folder: path.join(__dirname, '..', 'assets')
       },
@@ -167,117 +166,55 @@ describe('Weave web service', () => {
         expect(res.body.toString()).toBe('Hello from weave')
       })
   })
-
-  // it.only('GET test.hello with sanitized url', () => {
-  //   return request(server)
-  //     .get('/api_new/translate/language')
-  //     .then(res => {
-  //       expect(res.statusCode).toBe(200)
-  //       expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-  //       expect(res.body).toBe('Hello from ' + res.headers['x-request-id'])
-  //     })
-  // })
-})
-
-describe('Test rate limitter', () => {
-  let broker
-  let server
-  let clock
-
-  beforeAll(() => {
-    clock = lolex.install();
-
-    [broker, server] = setup({
-      port: 8156,
-      rateLimit: {
-        windowSizeMs: 5000,
-        limit: 3,
-        headers: true
-      },
-      handlers: [
-        {
-          path: '/api',
-          whitelist: ['math.*', 'auth.*']
-        }
-      ]
-    })
-
-    broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'))
-    return broker.start()
-  })
-
-  afterAll(() => {
-    clock.uninstall()
-    return broker.stop()
-      .then(() => {
-        broker = null
-        server = null
+  it('GET response headers from action', () => {
+    return request(server)
+      .get('/api/test/responseHeader')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('application/pdf')
+        expect(res.headers['custom-header-field']).toBe('i-am-custom')
       })
   })
 
-  it('GET /math', () => {
+  it('GET should return Buffer', () => {
     return request(server)
-      .get('/api/math/test?p1=1&p2=1')
+      .get('/api/test/buffer')
       .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remainung']).toBe('2')
-        expect(res.text).toBe('2')
+        expect(res.headers['content-type']).toBe('application/octet-stream')
+        expect(res.headers['content-length']).toBe('19')
+        expect(res.body).toEqual(Buffer.from('Lorem ipsum bla bla'))
       })
   })
 
-  it('GET /math', () => {
+  it('GET should return serialized Buffer', () => {
     return request(server)
-      .get('/api/math/test?p1=1&p2=1')
+      .get('/api/test/serializedBuffer')
       .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remainung']).toBe('1')
-        expect(res.text).toBe('2')
+        expect(res.headers['content-type']).toBe('application/octet-stream')
+        expect(res.headers['content-length']).toBe('19')
+        expect(res.body).toEqual(Buffer.from('Lorem ipsum bla bla'))
       })
   })
 
-  it('GET /math', () => {
+  it('GET should return custom content type', () => {
     return request(server)
-      .get('/api/math/test?p1=1&p2=1')
+      .get('/api/test/responseType')
       .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remainung']).toBe('0')
-        expect(res.text).toBe('2')
+        expect(res.headers['content-type']).toBe('custom/pdf')
+      })
+  })
+  it('GET should return custom content type', () => {
+    return request(server)
+      .get('/api/test/responseTypeInt')
+      .then(res => {
+        expect(res.headers['content-type']).toBe('custom/pdf')
       })
   })
 
-  it('GET /math', () => {
+  it('GET should handle custom status code from action', () => {
     return request(server)
-      .get('/api/math/test?p1=1&p2=1')
+      .get('/api/test/statusCode')
       .then(res => {
-        expect(res.statusCode).toBe(429)
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remainung']).toBe('0')
-        expect(JSON.parse(res.text)).toMatchObject({
-          name: 'RateLimitExceededError',
-          code: 429,
-          message: 'Too many requests.'
-        })
-      })
-  })
-
-  it('should reset rate limiter after x seconds', () => {
-    clock.tick(6000)
-    return request(server)
-      .get('/api/math/test?p1=1&p2=1')
-      .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remainung']).toBe('2')
-        expect(res.text).toBe('2')
+        expect(res.status).toBe(304)
       })
   })
 })
@@ -290,7 +227,7 @@ describe('Request hooks', () => {
   beforeAll(() => {
     flow = [];
     [broker, server] = setup({
-      port: 8156,
+      port: 4956,
       handlers: [
         {
           path: '/api',
@@ -348,7 +285,7 @@ describe('Handling handler routes', () => {
   beforeAll(() => {
     // flow = [];
     [broker, server] = setup({
-      port: 8156,
+      port: 4256,
       handlers: [
         {
           path: '/api',
@@ -429,7 +366,7 @@ describe('Authorization', () => {
 
   beforeAll(() => {
     [broker, server] = setup({
-      port: 8156,
+      port: 4506,
       handlers: [
         {
           path: '/api',
@@ -489,63 +426,3 @@ describe('Authorization', () => {
       })
   })
 })
-
-// describe('CORS', () => {
-//   let broker
-//   let server
-
-//   beforeAll(() => {
-//     [broker, server] = setup({
-//       port: 8156,
-//       cors: {
-//         origin: 'a'
-//       },
-//       handlers: [
-//         {
-//           path: '/api',
-//           routes: {
-//             'GET /json-authorized': 'test.json',
-//             'GET /json-authorized-fail': 'test.json'
-//           },
-//           authorization: true
-//         }
-//       ]
-//     })
-
-//     broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'))
-//     return broker.start()
-//   })
-
-//   afterAll(() => {
-//     return broker.stop()
-//   })
-
-//   it('should call an action through an route alias', () => {
-//     return request(server)
-//       .get('/api/json-authorized')
-//       .set('Origin', 'http://localhost:3000')
-//       .then(res => {
-//         expect(res.statusCode).toBe(200)
-//         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-//         expect(res.body).toEqual({
-//           name: 'Bill',
-//           age: 12,
-//           gender: 'male'
-//         })
-//       })
-//   })
-
-//   it('should fail with an authorization error', () => {
-//     return request(server)
-//       .get('/api/json-authorized-fail')
-//       .then(res => {
-//         expect(res.statusCode).toBe(405)
-//         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-//         expect(res.body).toEqual({
-//           code: 405,
-//           message: 'Failed',
-//           name: 'Error'
-//         })
-//       })
-//   })
-// })

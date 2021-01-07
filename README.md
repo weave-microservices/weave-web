@@ -2,13 +2,15 @@
 
 > A Web Gateway for weave microservice architectures.
 
+[![Build Status](https://github.com/weave-microservices/weave-web/workflows/CI/badge.svg)](https://travis-ci.com/weave-microservices/weave)
 [![NPM Version](https://img.shields.io/npm/v/@weave-js/web.svg)](https://www.npmjs.com/package/@weave-js/core)
 [![Build Status](https://travis-ci.com/weave-microservices/weave.svg?branch=master)](https://travis-ci.com/weave-microservices/weave)
 [![Downloads](https://img.shields.io/npm/dt/@weave-js/web.svg)](https://www.npmjs.com/package/@weave-js/web)
 
 ## Features
-* support HTTP & HTTPS
 * serve static files
+* support HTTP & HTTPS
+* HTTP2
 * Routing
 * Support for global and route level middlewares
 * alias names (with named parameters & REST shorthand)
@@ -16,7 +18,6 @@
 * multiple body parsers (json, urlencoded)
 * CORS headers
 * ETags
-* HTTP2
 * Rate limiter
 * before & after call hooks
 * Buffer & Stream handling
