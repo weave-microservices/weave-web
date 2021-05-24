@@ -6,14 +6,14 @@ const { deepMerge } = require('@weave-js/utils')
 const lolex = require('lolex')
 
 class CustomMemoryStore {
-  constructor (windowSizeMs) {
+  constructor (windowSizeTime) {
     this.counters = new Map()
-    this.resetTime = Date.now() + windowSizeMs
+    this.resetTime = Date.now() + windowSizeTime
 
     setInterval(() => {
-      this.resetTime = Date.now() + windowSizeMs
+      this.resetTime = Date.now() + windowSizeTime
       this.reset()
-    }, windowSizeMs)
+    }, windowSizeTime)
   }
 
   increment (key) {
@@ -60,7 +60,8 @@ describe('Test rate limitter', () => {
     [broker, server] = setup({
       port: 6157,
       rateLimit: {
-        windowSizeMs: 5000,
+        enabled: true,
+        windowSizeTime: 5000,
         limit: 3,
         headers: true
       },
@@ -163,6 +164,7 @@ describe('Test rate limitter with custom store', () => {
     [broker, server] = setup({
       port: 6357,
       rateLimit: {
+        enabled: true,
         RateLimitStore: CustomMemoryStore,
         windowSizeMs: 5000,
         limit: 3,

@@ -38,7 +38,8 @@ describe('Test authorization', () => {
     [broker, server] = setup({
       port: 2159,
       rateLimit: {
-        windowSizeMs: 5000,
+        enabled: true,
+        windowSizeTime: 5000,
         limit: 3,
         headers: true
       },
