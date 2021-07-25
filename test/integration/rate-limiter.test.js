@@ -4,6 +4,7 @@ const request = require('supertest')
 const path = require('path')
 const { deepMerge } = require('@weave-js/utils')
 const lolex = require('lolex')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 
 class CustomMemoryStore {
   constructor (windowSizeTime) {
@@ -68,6 +69,7 @@ describe('Test rate limitter', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['math.*', 'auth.*']
         }
       ]
@@ -173,6 +175,7 @@ describe('Test rate limitter with custom store', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['math.*', 'auth.*']
         }
       ]

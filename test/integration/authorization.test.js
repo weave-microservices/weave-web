@@ -3,6 +3,7 @@ const { WebService } = require('../../lib')
 const request = require('supertest')
 const path = require('path')
 const { deepMerge } = require('@weave-js/utils')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -46,6 +47,7 @@ describe('Test authorization', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['math.*', 'auth.*'],
           authorization: true
         }

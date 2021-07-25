@@ -1,6 +1,7 @@
 const request = require('supertest')
 const path = require('path')
 const setup = require('../utils/setupNode')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 
 describe('Test CORS handling', () => {
   let broker
@@ -13,6 +14,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['greeter.*']
         }
       ]
@@ -43,6 +45,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['greeter.*']
         }
       ]
@@ -77,6 +80,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['greeter.*']
         }
       ]
@@ -109,6 +113,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['greeter.*']
         }
       ]
@@ -143,6 +148,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           cors: {
             methods: ['GET', 'POST'],
             origin: ['http://*.a.com', 'http://*.localhost:5147']
@@ -181,6 +187,7 @@ describe('Test CORS handling', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           cors: {
             methods: ['GET', 'POST'],
             origin: 'http://localhost:5147',

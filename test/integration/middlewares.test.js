@@ -1,6 +1,7 @@
 const request = require('supertest')
 const path = require('path')
 const setup = require('../utils/setupNode')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 
 describe('Test middlewares', () => {
   let broker
@@ -18,6 +19,7 @@ describe('Test middlewares', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           use: [middleware],
           whitelist: ['math.*', 'auth.*']
         }

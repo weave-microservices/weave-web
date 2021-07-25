@@ -1,4 +1,5 @@
 const request = require('supertest')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 const setup = require('../utils/setupNode')
 
 describe('Test middlewares', () => {
@@ -18,6 +19,7 @@ describe('Test middlewares', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           beforeRequest: beforeRequestHandler,
           afterRequest: afterRequestHandler,
           requestFailed: requestFailedHandler,

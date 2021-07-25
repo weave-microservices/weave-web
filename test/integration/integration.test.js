@@ -4,6 +4,7 @@ const request = require('supertest')
 const path = require('path')
 const fs = require('fs')
 const { deepMerge } = require('@weave-js/utils')
+const { MAPPING_POLICY_ALL } = require('../../lib/constants')
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -92,6 +93,7 @@ describe('Weave web service', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['math.*', 'auth.*', 'test.*']
         },
         {
@@ -231,6 +233,7 @@ describe('Request hooks', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['test.*', 'math.*'],
           beforeRequest () {
             flow.push('before')
@@ -289,6 +292,7 @@ describe('Handling handler routes', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           whitelist: ['test.*', 'math.*'],
           routes: {
             'GET /json': 'test.json',
@@ -370,6 +374,7 @@ describe('Authorization', () => {
       handlers: [
         {
           path: '/api',
+          mappingPolicy: MAPPING_POLICY_ALL,
           routes: {
             'GET /json-authorized': 'test.json',
             'GET /json-authorized-fail': 'test.json'
