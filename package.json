@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@weave-js/core": "0.9.0-beta.12"
+    "@weave-js/core": "0.9.0-beta.13"
   },
   "devDependencies": {
     "eslint": "^7.31.0",
@@ -33,8 +33,8 @@
     "supertest": "^6.1.4"
   },
   "dependencies": {
-    "@weave-js/core": "0.9.0-beta.12",
-    "@weave-js/utils": "0.9.0-beta.2",
+    "@weave-js/core": "0.9.0-beta.13",
+    "@weave-js/utils": "0.9.0-beta.3",
     "body-parser": "^1.19.0",
     "mime-types": "^2.1.31",
     "serve-static": "^1.14.1"

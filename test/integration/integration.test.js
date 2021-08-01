@@ -219,6 +219,18 @@ describe('Weave web service', () => {
         expect(res.status).toBe(304)
       })
   })
+
+  it('GET /math with request ID', () => {
+    return request(server)
+      .get('/api/math/test?p1=1&p2=1')
+      .set('X-Request-ID', 'abc12345')
+      .then(res => {
+        expect(res.statusCode).toBe(200)
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
+        expect(res.headers['x-request-id']).toBe('abc12345')
+        expect(res.text).toBe('2')
+      })
+  })
 })
 
 describe('Request hooks', () => {

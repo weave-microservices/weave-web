@@ -2,3 +2,4 @@ node_modules
 lib/coverage
 .vscode/launch.json
 .DS_Store
+dev
