@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@weave-js/core": "0.9.0-beta.13"
+    "@weave-js/core": "^0.9.0"
   },
   "devDependencies": {
     "eslint": "^7.31.0",
