@@ -1,7 +1,7 @@
 {
   "name": "@weave-js/web",
-  "version": "0.9.0",
-  "description": "",
+  "version": "0.10.0",
+  "description": "HTTP Gateway mixin for weave microservice framework",
   "main": "lib/index.js",
   "scripts": {
     "ci": "jest --watch",
@@ -20,24 +20,22 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@weave-js/core": "^0.9.0"
+    "@weave-js/core": "^0.11.1",
+    "@weave-js/utils": "^0.10.1"
   },
   "devDependencies": {
-    "eslint": "^7.31.0",
+    "@types/jest": "^27.4.1",
+    "eslint": "^8.11.0",
     "eslint-config-fw": "^1.0.3",
-    "eslint-loader": "^4.0.2",
-    "jest": "^27.0.6",
-    "jest-cli": "^27.0.6",
-    "lolex": "^6.0.0",
-    "request": "^2.88.2",
-    "supertest": "^6.1.4"
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1",
+    "@sinonjs/fake-timers": "^9.1.1",
+    "supertest": "^6.2.2"
   },
   "dependencies": {
-    "@weave-js/core": "0.9.0-beta.13",
-    "@weave-js/utils": "0.9.0-beta.3",
-    "body-parser": "^1.19.0",
-    "mime-types": "^2.1.32",
-    "serve-static": "^1.14.1"
+    "body-parser": "^1.19.2",
+    "mime-types": "^2.1.35",
+    "serve-static": "^1.15.0"
   },
   "jest": {
     "testEnvironment": "node",
