@@ -1,6 +1,6 @@
 {
   "name": "@weave-js/web",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "HTTP Gateway mixin for weave microservice framework",
   "main": "lib/index.js",
   "scripts": {
