@@ -43,7 +43,7 @@ describe('Test middlewares', () => {
       .get('/api/math/test?p1=1&p2=1')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.text).toBe('6');
       });
   });

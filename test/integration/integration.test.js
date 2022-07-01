@@ -144,7 +144,7 @@ describe('Weave web service', () => {
       .get('/api/math/test?p1=1&p2=1')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.text).toBe('2');
       });
   });
@@ -154,7 +154,7 @@ describe('Weave web service', () => {
       .get('/api/test/hello/')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toBe('Hello from ' + res.headers['x-request-id']);
       });
   });
@@ -226,7 +226,7 @@ describe('Weave web service', () => {
       .set('X-Request-ID', 'abc12345')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.headers['x-request-id']).toBe('abc12345');
         expect(res.text).toBe('2');
       });
@@ -338,7 +338,7 @@ describe('Handling handler routes', () => {
       .get('/api/json')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
           name: 'Bill',
           age: 12,
@@ -352,7 +352,7 @@ describe('Handling handler routes', () => {
       .get('/api/json/Donald')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
           name: 'Donald',
           age: 12,
@@ -366,7 +366,7 @@ describe('Handling handler routes', () => {
       .get('/api/json-middleware')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
           name: 'Johnny',
           age: 12,
@@ -420,7 +420,7 @@ describe('Authorization', () => {
       .get('/api/json-authorized')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
           name: 'Bill',
           age: 12,
@@ -434,7 +434,7 @@ describe('Authorization', () => {
       .get('/api/json-authorized-fail')
       .then(res => {
         expect(res.statusCode).toBe(405);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
           code: 405,
           message: 'Failed',

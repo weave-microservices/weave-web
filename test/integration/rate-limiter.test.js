@@ -93,7 +93,7 @@ describe('Test rate limitter', () => {
       .get('/api/math/test?p1=1&p2=1')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.headers['x-rate-limit-limit']).toBe('3');
         expect(res.headers['x-rate-limit-window']).toBe('5000');
         expect(res.headers['x-rate-limit-remaining']).toBe('2');
@@ -199,7 +199,7 @@ describe('Test rate limitter with custom store', () => {
       .get('/api/math/test?p1=1&p2=1')
       .then(res => {
         expect(res.statusCode).toBe(200);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;');
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.headers['x-rate-limit-limit']).toBe('3');
         expect(res.headers['x-rate-limit-window']).toBe('5000');
         expect(res.headers['x-rate-limit-remaining']).toBe('2');
