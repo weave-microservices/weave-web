@@ -10,8 +10,8 @@ module.exports = {
         name: { type: 'string' }
       },
       handler: (context) => {
-        return `Hello ${context.data.name}!`
+        return `Hello ${context.data.name}!`;
       }
     }
   }
-}
+};

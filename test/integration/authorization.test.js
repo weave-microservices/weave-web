@@ -1,9 +1,9 @@
-const { Weave } = require('@weave-js/core')
-const { WebService } = require('../../lib')
-const request = require('supertest')
-const path = require('path')
-const { deepMerge } = require('@weave-js/utils')
-const { MAPPING_POLICY_ALL } = require('../../lib/constants')
+const { Weave } = require('@weave-js/core');
+const { WebService } = require('../../lib');
+const request = require('supertest');
+const path = require('path');
+const { deepMerge } = require('@weave-js/utils');
+const { MAPPING_POLICY_ALL } = require('../../lib/constants');
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -11,29 +11,29 @@ const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
       enabled: false,
       logLevel: 'fatal'
     }
-  }, nodeSettings))
+  }, nodeSettings));
 
-  broker.loadService(path.join(__dirname, '..', 'services', 'greeter.service.js'))
+  broker.loadService(path.join(__dirname, '..', 'services', 'greeter.service.js'));
 
   const service = broker.createService({
     mixins: [WebService()],
     settings,
     ...schemaExtensions
-  })
+  });
 
-  const server = service.server
+  const server = service.server;
 
-  return [broker, server, service]
-}
+  return [broker, server, service];
+};
 
 describe('Test authorization', () => {
-  let broker
-  let server
+  let broker;
+  let server;
   const methods = {
     authorize: jest.fn(() => {
-      return true
+      return true;
     })
-  }
+  };
 
   beforeAll(() => {
     [broker, server] = setup({
@@ -54,31 +54,31 @@ describe('Test authorization', () => {
       ]
     }, {}, {
       methods
-    })
+    });
 
-    broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'))
-    return broker.start()
-  })
+    broker.loadService(path.join(__dirname, '..', 'services', 'math.service.js'));
+    return broker.start();
+  });
 
   afterAll(() => {
     return broker.stop()
       .then(() => {
-        broker = null
-        server = null
-      })
-  })
+        broker = null;
+        server = null;
+      });
+  });
 
   it('GET /math (1)', () => {
     return request(server)
       .get('/api/math/test?p1=1&p2=4')
       .then(res => {
-        expect(res.statusCode).toBe(200)
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8;')
-        expect(res.headers['x-rate-limit-limit']).toBe('3')
-        expect(res.headers['x-rate-limit-window']).toBe('5000')
-        expect(res.headers['x-rate-limit-remaining']).toBe('2')
-        expect(res.text).toBe('5')
-        expect(methods.authorize).toBeCalled()
-      })
-  })
-})
+        expect(res.statusCode).toBe(200);
+        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
+        expect(res.headers['x-rate-limit-limit']).toBe('3');
+        expect(res.headers['x-rate-limit-window']).toBe('5000');
+        expect(res.headers['x-rate-limit-remaining']).toBe('2');
+        expect(res.text).toBe('5');
+        expect(methods.authorize).toBeCalled();
+      });
+  });
+});
