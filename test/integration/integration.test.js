@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs');
 const { deepMerge } = require('@weave-js/utils');
 const { MAPPING_POLICY_ALL } = require('../../lib/constants');
-const { WeaveError } = require('@weave-js/core/lib/errors');
 const { AuthorizationError } = require('../helper/errors');
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {

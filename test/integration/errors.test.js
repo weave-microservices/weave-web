@@ -16,8 +16,11 @@ describe('Test errors', () => {
           whitelist: ['math.*', 'auth.*']
         }
       ],
-      errorFormatter (statusCode, error) {
-        return 'Something went wrong.';
+      errorHeader (_, response) {
+        response.setHeader('Content-type', 'text/html; charset=UTF-8');
+      },
+      errorFormatter (statusCode, error, response) {
+        return 'You are not authorized';
       }
     });
 
@@ -35,10 +38,15 @@ describe('Test errors', () => {
   it('should return a custom formatted error', () => {
     return request(server)
       .get('/api/math/test')
+      .set('Accept', 'text/html')
+
+      // .catch(err => {
+      //   expect(res.statusCode).toBe(404);
+      // })
       .then(res => {
-        expect(res.statusCode).toBe(404);
-        expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
-        expect(res.text).toBe('6');
+        expect(res.statusCode).toBe(422);
+        expect(res.headers['content-type']).toBe('text/html; charset=UTF-8');
+        expect(res.text).toBe('You are not authorized');
       });
   });
 });
