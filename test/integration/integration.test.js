@@ -5,6 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const { deepMerge } = require('@weave-js/utils');
 const { MAPPING_POLICY_ALL } = require('../../lib/constants');
+const { WeaveError } = require('@weave-js/core/lib/errors');
+const { AuthorizationError } = require('../helper/errors');
 
 const setup = (settings, nodeSettings = {}, schemaExtensions = {}) => {
   const broker = Weave(deepMerge({
@@ -383,6 +385,11 @@ describe('Authorization', () => {
   beforeAll(() => {
     [broker, server] = setup({
       port: 4506,
+      getCustomHttpErrorCode (error) {
+        if (error.code === 'HTTP_AUTHENTICATION_FAILED') {
+          return 405;
+        }
+      },
       handlers: [
         {
           path: '/api',
@@ -400,8 +407,8 @@ describe('Authorization', () => {
       methods: {
         authorize (context, request, response) {
           if (request.parsedUrl !== '/api/json-authorized') {
-            const error = new Error('Failed');
-            error.code = 405;
+            const error = new AuthorizationError();
+            // error.statusCode = 405;
             return Promise.reject(error);
           }
         }
@@ -436,9 +443,10 @@ describe('Authorization', () => {
         expect(res.statusCode).toBe(405);
         expect(res.headers['content-type']).toBe('application/json; charset=UTF-8');
         expect(res.body).toEqual({
-          code: 405,
-          message: 'Failed',
-          name: 'Error'
+          name: 'AuthorizationError',
+          statusCode: 405,
+          code: 'HTTP_AUTHENTICATION_FAILED',
+          message: 'Authorization failed.'
         });
       });
   });
