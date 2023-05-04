@@ -135,7 +135,8 @@ describe('Test rate limitter', () => {
         expect(res.headers['x-rate-limit-remaining']).toBe('0');
         expect(JSON.parse(res.text)).toMatchObject({
           name: 'RateLimitExceededError',
-          code: 429,
+          code: 'HTTP_RATE_LIMIT_EXCEEDED',
+          statusCode: 429,
           message: 'Too many requests.'
         });
       });
@@ -241,7 +242,8 @@ describe('Test rate limitter with custom store', () => {
         expect(res.headers['x-rate-limit-remaining']).toBe('0');
         expect(JSON.parse(res.text)).toMatchObject({
           name: 'RateLimitExceededError',
-          code: 429,
+          code: 'HTTP_RATE_LIMIT_EXCEEDED',
+          statusCode: 429,
           message: 'Too many requests.'
         });
       });

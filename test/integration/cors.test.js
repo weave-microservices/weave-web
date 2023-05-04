@@ -60,7 +60,8 @@ describe('Test CORS handling', () => {
       .then(res => {
         expect(res.statusCode).toBe(403);
         expect(res.body).toEqual({
-          code: 403,
+          statusCode: 403,
+          code: 'HTTP_ORIGIN_NOT_ALLOWED',
           message: 'Forbidden.',
           name: 'ForbiddenError'
         });
