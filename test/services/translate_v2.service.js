@@ -5,6 +5,7 @@ module.exports = {
       basePath: '/translate'
     }
   },
+  version: 2,
   actions: {
     language () {
       return 'deutsch';
@@ -18,7 +19,7 @@ module.exports = {
         path: '/reverse/:text'
       },
       handler: (context) => {
-        return context.data.text.split('').reverse().join('');
+        return context.data.text.split('').reverse().join('') + '-v2';
       }
     }
   }
