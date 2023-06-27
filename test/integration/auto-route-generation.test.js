@@ -17,11 +17,11 @@ describe('Auto generate routes from actions', () => {
       },
       handlers: [{
         path: '/',
-        generateAutoRoutes: true
+        generateRoutes: true
       }],
       actions: {
         main: {
-          rest: {
+          http: {
             method: 'get',
             path: 'main'
           },
@@ -58,14 +58,14 @@ describe('Auto generate routes from actions', () => {
       },
       handlers: [{
         path: '/',
-        generateAutoRoutes: true,
+        generateRoutes: true,
         whitelist: [
           'api2.yes'
         ]
       }],
       actions: {
         yes: {
-          rest: {
+          http: {
             method: 'GET',
             path: 'yes'
           },
@@ -74,7 +74,7 @@ describe('Auto generate routes from actions', () => {
           }
         },
         no: {
-          rest: {
+          http: {
             method: 'GET',
             path: 'no'
           },
@@ -96,6 +96,57 @@ describe('Auto generate routes from actions', () => {
       .get('/api2/no');
 
     expect(result.statusCode).toBe(404);
+
+    await n1.stop();
+  });
+});
+
+describe('Auto generate routes from versioned actions', () => {
+  it('should generate routes from actions with versions', async () => {
+    const n1 = createBroker({
+      nodeId: 'node-1'
+    });
+
+    const service = n1.createService({
+      name: 'api3',
+      mixins: [WebService()],
+      settings: {
+        port: 2599,
+        generateRoutesFromActions: true,
+        logRouteRegistration: true,
+        logRouteRegistrationLevel: 'info'
+      },
+      handlers: [{
+        path: '/',
+        generateRoutes: true,
+        whitelist: [
+          'translate.reverse'
+        ]
+      }, {
+        path: '/v2',
+        generateRoutes: true,
+        whitelist: [
+          'v2.translate.reverse'
+        ]
+      }]
+    });
+
+    n1.createService(require('../services/translate.service'));
+    n1.createService(require('../services/translate_v2.service'));
+
+    await n1.start();
+
+    const resultDefault = await request(service.server)
+      .get('/translate/reverse/hello');
+
+    expect(resultDefault.statusCode).toBe(200);
+    expect(resultDefault.body).toBe('olleh');
+
+    const resultV2 = await request(service.server)
+      .get('/v2/translate/reverse/hello');
+
+    expect(resultV2.statusCode).toBe(200);
+    expect(resultV2.body).toBe('olleh-v2');
 
     await n1.stop();
   });
